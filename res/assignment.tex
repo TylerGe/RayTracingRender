@@ -1,0 +1,94 @@
+\documentclass[acmtog]{acmart}
+% Title portion
+\title{Assignment 3 : Realistic Rendering with Ray Tracing} 
+\author{Name:\quad Ge Tianyang  \\ student number:\quad 27869265
+	\\email:\quad user1@mailserver.xx}
+\usepackage{listings}
+\lstset{                        %Settings for listings package.
+language=[ANSI]{C++},
+backgroundcolor=\color{lightgray},
+basicstyle=\footnotesize,
+breakatwhitespace=false,
+breaklines=true,
+captionpos=b,
+commentstyle=\color{olive},
+directivestyle=\color{blue},
+extendedchars=false,
+% frame=single,%shadowbox
+framerule=0pt,
+% keywordstyle=\color{blue}\bfseries,
+morekeywords={*,define,*,include...},
+numbersep=5pt,
+rulesepcolor=\color{red!20!green!20!blue!20},
+showspaces=false,
+showstringspaces=false,
+showtabs=false,
+stepnumber=2,
+stringstyle=\color{purple},
+tabsize=4,
+title=\lstname
+}
+% Document starts
+\begin{document}
+\maketitle
+
+\vspace*{2 ex}
+
+
+\section{Introduction}
+The project is to trace ray until get the light source. According to the Monte Carlo integration, get the whole energy from a hemisphere for diffuse material, and return the value to each pixel.
+\section{Implementation Details}
+\subsection{Camera} For camera, there are three fundamental elements: fov, width, height. For simplicity, we take only one ray to trace and large amount of rays from one pixel to simulate the reality. Then consider transfer the pixel on the image coordinate to the world coordinate.\\
+\begin{lstlisting}
+double rotiax=(-0.5*_imageW+unit_rand.x()+x)/(double)_imageW;
+double rotiay=(-0.5*_imageH+unit_rand.y()+y)/(double)_imageH;
+ Vector3d direction=rotiax*_windowRight*_cameraRight + rotiay*_cameraUp*_windowTop+_cameraFwd*_nearPlaneDistance;
+\end{lstlisting}
+\subsection{Intersection} Considering the ray intersect objects problems, there are 4 types of objects: Sphere, Quad, Triangles, Mesh. Each type has different normal and intersection caluculate. 
+\subsection{Render} Render part intersect every object in the scene, and choose the one has the shortest distance. Then use a structure storing the distance, material and normal. At last, calculate the reflected ray and continue tracing it, if it reflected 5 times(which could be set by user) stop and return 0.
+\begin{lstlisting}
+if(isct._hit){
+    if(isct._material.getType()==EMIT){
+        return isct._material.get_emission();
+    }
+    if(depth>=4){
+//                return Vector3d();
+        return isct._material.get_colour();
+    }
+    double cos=isct._normal.dot(-ray.direction())/(isct._normal.norm()*ray.direction().norm());
+    Vector3d location=ray.origin()+ray.direction()*isct._u;
+    Ray re_ray=isct._material.get_reflected_ray(ray, location, isct._normal, Xi);
+    depth++;
+    Vector3d direct={25.0f,25.0f,25.0f};
+
+    return cos*(isct._material.get_colour())*trace_ray(re_ray, depth, Xi);
+}
+\end{lstlisting} 
+\subsection{Mesh and grid} Mesh consists of a lot of triangles. It could be very large so it obviously could not intersect test every triangle. By grid acceleration, we divide the whole aabbox into eight boxes. Then divide triangles into each box, so if ray intersect the total aabbox, it needs to decide it meets which box then search the whole triangles inside the box.
+\begin{lstlisting}
+class Box{
+    private:
+        AABBox *aabbox;
+    public:
+        AABBox Total;
+        //bl min,tr max
+        void Init();
+        void Dividebox();
+        void Grid(int i,Vector3d &p0,Vector3d &p1,Vector3d &p2);
+        int getid(Vector3d &p);
+        AABBox getbox(int i);
+        std::vector<std::vector<int>> array;
+    };
+\end{lstlisting}
+\section{Results}
+\begin{figure}[htpb]
+    \centering
+    \includegraphics[width=20cm,angle=270]{render.png}\\
+    \label{fig:result1}
+\end{figure}
+
+
+
+
+
+\end{document}

@@ -1,0 +1,16 @@
+﻿  mesh.cpp
+objects\mesh.cpp(11): warning C4267: 'initializing': conversion from 'size_t' to 'unsigned long', possible loss of data
+objects\mesh.cpp(25): warning C4267: '=': conversion from 'size_t' to 'long', possible loss of data
+objects\mesh.cpp(26): warning C4267: '=': conversion from 'size_t' to 'long', possible loss of data
+objects\mesh.cpp(46): warning C4267: '=': conversion from 'size_t' to 'long', possible loss of data
+  triangle.cpp
+  scene.cpp
+scene\scene.cpp(17): warning C4267: 'initializing': conversion from 'size_t' to 'long', possible loss of data
+  main.cpp
+  Generating code
+  55 of 2047 functions ( 2.7%) were compiled, the rest were copied from previous compilation.
+    1 functions were new in current compilation
+    19 functions had inline decision re-evaluated but remain unchanged
+  Finished generating code
+  Orchid.vcxproj -> E:\2017-2018\cg1\as3\code\windows\as3\x64\Release\Orchid.exe
+  Orchid.vcxproj -> E:\2017-2018\cg1\as3\code\windows\as3\x64\Release\Orchid.pdb (Full PDB)
